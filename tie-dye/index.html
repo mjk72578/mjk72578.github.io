@@ -24,7 +24,11 @@
   header p { font-size: 1.15rem; margin-top: .5rem; }
   main { max-width: 640px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
   section { margin-bottom: 2.25rem; }
-  h2 { font-size: 1.35rem; margin-bottom: .75rem; border-bottom: 2px solid #333; padding-bottom: .35rem; }
+  h2 {
+    font-size: 1.35rem; margin-bottom: .75rem; padding-bottom: .35rem;
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(90deg, #e53935, #fb8c00, #fdd835, #43a047, #1e88e5, #8e24aa) 1;
+  }
   ol, ul { padding-left: 1.4rem; }
   li { margin-bottom: .5rem; }
   .swatches { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
@@ -43,6 +47,31 @@
     background: #fdd835; color: #111; font-weight: 700; font-size: 1.1rem;
     text-decoration: none; border-radius: 999px;
   }
+  .picker {
+    background: #fff; color: #111; border-radius: 12px;
+    padding: 1.25rem; border: 1px solid #ddd;
+  }
+  .picker h2 { color: #111; }
+  .picker-note { color: #444; font-size: .95rem; margin-bottom: 1rem; }
+  .picker .swatches { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .25rem; }
+  .picker .swatch {
+    display: flex; flex-direction: column; align-items: center; gap: .4rem;
+    background: none; border: none; cursor: pointer; padding: 0;
+    font: inherit; color: #111;
+  }
+  .picker .dot {
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 2px solid #999;
+  }
+  .picker .swatch.selected .dot { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #111; }
+  .picker .name { font-size: .9rem; }
+  .picked { margin-top: 1rem; font-weight: 700; }
+  .picker-hint { color: #666; font-size: .9rem; min-height: 1.2em; }
+  .picker .custom-note { color: #444; font-size: .9rem; margin-top: .5rem; }
+  .bar2 {
+    height: 6px; border-radius: 3px; margin-bottom: 2.25rem;
+    background: linear-gradient(90deg, #e53935, #fb8c00, #fdd835, #43a047, #1e88e5, #8e24aa);
+  }
   footer { text-align: center; color: #777; font-size: .85rem; padding: 0 1rem 2rem; }
 </style>
 </head>
@@ -60,26 +89,36 @@
   <section>
     <h2>How it works</h2>
     <ol>
-      <li><strong>Pick your colors.</strong> Custom colors, any combination you want.</li>
+      <li><strong>Pick your colors.</strong> Choose up to 3 from the dyes we stock, below.</li>
       <li><strong>Pick your size.</strong> Adult and youth sizes.</li>
       <li><strong>Ready in 48 hours.</strong> Pickup in person, or shipped to you.</li>
     </ol>
   </section>
 
-  <section>
-    <h2>Colors</h2>
-    <p>You choose — any colors, any combination. A few examples:</p>
-    <div class="swatches" aria-label="Example colors">
-      <span class="swatch" style="background:#e53935" title="Red"></span>
-      <span class="swatch" style="background:#fb8c00" title="Orange"></span>
-      <span class="swatch" style="background:#fdd835" title="Yellow"></span>
-      <span class="swatch" style="background:#43a047" title="Green"></span>
-      <span class="swatch" style="background:#1e88e5" title="Blue"></span>
-      <span class="swatch" style="background:#8e24aa" title="Purple"></span>
-      <span class="swatch" style="background:#ec407a" title="Pink"></span>
-      <span class="swatch" style="background:#212121" title="Black"></span>
+  <section class="picker">
+    <h2>Pick your colors</h2>
+    <p class="picker-note">These are the dyes we stock. Tap a color to pick it - up to 3 per shirt.</p>
+    <div class="swatches" id="swatches">
+      <button type="button" class="swatch" data-color="Lemon Yellow" aria-pressed="false">
+        <span class="dot" style="background:#FDE910"></span>
+        <span class="name">Lemon Yellow</span>
+      </button>
+      <button type="button" class="swatch" data-color="Fuchsia" aria-pressed="false">
+        <span class="dot" style="background:#FF00FF"></span>
+        <span class="name">Fuchsia</span>
+      </button>
+      <button type="button" class="swatch" data-color="Turquoise" aria-pressed="false">
+        <span class="dot" style="background:#40E0D0"></span>
+        <span class="name">Turquoise</span>
+      </button>
+      <button type="button" class="swatch" data-color="Jet Black" aria-pressed="false">
+        <span class="dot" style="background:#111111"></span>
+        <span class="name">Jet Black</span>
+      </button>
     </div>
-    <p class="note">Swatches are examples only — tell us the colors you want and we'll dye to match.</p>
+    <p class="picked" id="picked">No colors picked yet - tap up to 3.</p>
+    <p class="picker-hint" id="picker-hint"></p>
+    <p class="custom-note">Want something else? Ask in the "anything else" box on the order form and we will see what we can do.</p>
   </section>
 
   <section class="promise">
@@ -91,15 +130,51 @@
     <h2>Pricing</h2>
     <p><strong>$20 per shirt.</strong></p>
     <p class="note">Tennessee orders include sales tax in your confirmed total. Shipping, if you choose it, is figured after you order and added before you pay.</p>
+    <p class="note">A gentle heads-up: bigger blanks (2XL and up) cost us a little more, so those shirts may run a bit higher - we will always confirm your total before you pay, so no surprises.</p>
   </section>
 
   <section>
     <h2>To order</h2>
-    <p>Fill out the order form — size, men's or women's cut, your 3 colors, and pickup or shipping:</p>
+    <p>Pick your colors above, then fill out the order form - size, men's or women's cut, your 3 colors, and pickup or shipping:</p>
     <p><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSfmgNYZUGolY5MxtVtJyjjCWSzPf-Rj8iqPfc7S8-ws4Oo3zA/viewform">Order a shirt</a></p>
     <p style="margin-top:1rem;"><strong>How payment works:</strong> after you order, we'll confirm your total (shirt + sales tax on Tennessee orders + shipping on shipped orders) before you pay. Pay cash on pickup in person, or Cash App for shipped orders.</p>
   </section>
+  <div class="bar2"></div>
 </main>
 <footer>Hand-dyed to order. No two shirts alike.</footer>
+<script>
+  (function () {
+    var max = 3;
+    var picked = [];
+    var pickedEl = document.getElementById('picked');
+    var hintEl = document.getElementById('picker-hint');
+    function render() {
+      if (picked.length) {
+        pickedEl.textContent = 'Your colors: ' + picked.join(', ') + ' - enter these on the order form.';
+      } else {
+        pickedEl.textContent = 'No colors picked yet - tap up to 3.';
+      }
+      hintEl.textContent = picked.length >= max ? 'That is 3 - tap a picked color to swap it out.' : '';
+    }
+    var buttons = document.querySelectorAll('#swatches .swatch');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var color = btn.getAttribute('data-color');
+        var i = picked.indexOf(color);
+        if (i >= 0) {
+          picked.splice(i, 1);
+          btn.classList.remove('selected');
+          btn.setAttribute('aria-pressed', 'false');
+        } else if (picked.length < max) {
+          picked.push(color);
+          btn.classList.add('selected');
+          btn.setAttribute('aria-pressed', 'true');
+        }
+        render();
+      });
+    });
+    render();
+  })();
+</script>
 </body>
 </html>
