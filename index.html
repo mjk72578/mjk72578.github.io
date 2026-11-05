@@ -427,7 +427,6 @@
     <div class="btnrow">
       <button class="btn" type="button" data-copy>Copy author page link</button>
       <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmjk72578.github.io" target="_blank" rel="noopener">Share on Facebook</a>
-      <a class="btn" href="https://mjk72578.goatcounter.com/" target="_blank" rel="noopener">Visitor stats (public)</a>
     </div>
   </section>
 </main>
@@ -435,6 +434,7 @@
 <footer>
   <div class="wrap">
     <p>© 2026 Miles Kimmons · KDI Books · Tullahoma, Tennessee</p>
+    <p>Visitors: <span id="visitorCount">…</span></p>
     <p>Books: <a href="https://www.lulu.com/search?contributor=Miles+Kimmons&amp;page=1&amp;pageSize=10">KDI Books on Lulu</a> · Author page: https://mjk72578.github.io</p>
     <p>Live author page — trimmed edition, November 2026.</p>
   </div>
@@ -551,6 +551,12 @@
   }, {passive:true});
   topBtn.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
 })();
+</script>
+<script>
+  fetch('https://mjk72578.goatcounter.com/counter/TOTAL.json')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ document.getElementById('visitorCount').textContent = d.count; })
+    .catch(function(){ document.getElementById('visitorCount').textContent = '—'; });
 </script>
 <script data-goatcounter="https://mjk72578.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
